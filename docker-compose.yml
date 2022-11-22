@@ -1,0 +1,33 @@
+version: '2'
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=kaza
+      - MYSQL_PASSWORD=kaza
+      - MYSQL_DATABASE=kaza
+      - MYSQL_USER=kaza
+    volumes:
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+  api-auth:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: kaza
+      DB_PASS: kaza
+      DB_HOST: db
+      DB_NAME: kaza
+      JWT_SECRET_KEY: jwt
+      PORT: 3000
+    volumes:
+      - .:/usr/src/app
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8085:8080
